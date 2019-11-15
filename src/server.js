@@ -50,6 +50,7 @@ app.use('/graphql', graphqlHTTP({
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
+app.use(bodyParser.json());
 
 app.use('/rest', restRoutes());
 app.use('/users', userRoutes());

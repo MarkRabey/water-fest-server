@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
 const Schema = mongoose.Schema;
 
@@ -46,7 +49,7 @@ UserSchema.pre('save', async function (next) {
 
 UserSchema.methods.generateAuthToken = async function() {
   const user = this;
-  const token = jwt.sign({ _id: user._id }, 'secret');
+  const token = jwt.sign({ _id: user._id }, process.env.SECRET);
   user.tokens = user.tokens.concat({ token });
   await user.save();
   return token;
