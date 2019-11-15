@@ -12,10 +12,9 @@ export default () => {
 
   router.get('/google/callback', passport.authenticate('google', {
     failureRedirect: '/',
-    session: false,
+    session: true,
   }), (request, response) => {
-    const token = request.user.token;
-    response.redirect('http://localhost:3000?token=' + token);
+    response.redirect('http://localhost:3000');
   });
 
   return router;

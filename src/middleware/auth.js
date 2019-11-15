@@ -2,6 +2,11 @@ import User from '../models/User';
 import { verifyJwt } from '../utils/verifyJwt';
 
 export default async (request, response, next) => {
+  if (request.isAuthenticated()) {
+    next();
+    return;
+  }
+
   try {
     const { data, token } = await verifyJwt(request);
     const user = await User.findOne({ _id: data._id, 'tokens.token': token });

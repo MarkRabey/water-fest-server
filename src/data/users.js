@@ -1,9 +1,4 @@
 export default [
-  // {
-  //   name: "Mark Rabey",
-  //   email: "mark.rabey@georgiancollege.ca",
-  //   password: "password",
-  // },
   {
     password: "200425604",
     name: "Nikhila Appachan",

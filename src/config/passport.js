@@ -14,6 +14,16 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET;
 
 export default passport => {
+  passport.serializeUser(function (user, fn) {
+    fn(null, user);
+  });
+  
+  passport.deserializeUser(function (id, fn) {
+    User.findOne({_id: id.doc._id}, function (err, user) {
+      fn(err, user);
+    });
+  });
+
   passport.use(
     new JwtStrategy(opts, (jwt_payload, done) => {
       User.findById(jwt_payload.id)
@@ -34,7 +44,6 @@ export default passport => {
       callbackURL: `${ process.env.APP_URL }/auth/google/callback`
     },
     async (accessToken, refreshToken, profile, done) => {
-      console.log(profile);
       try {
         const userData = {
           email: profile.emails[0].value,

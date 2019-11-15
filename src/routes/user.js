@@ -9,7 +9,7 @@ export default () => {
     caseSensitive: true,
   });
 
-  router.get('/', async (req, res, next) => {
+  router.get('/', auth, async (req, res, next) => {
     try {
       const users = await User.find();
       res.json(users);
