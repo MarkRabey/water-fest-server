@@ -11,6 +11,7 @@ import passportConfig from './config/passport';
 import schema from './graphql/schema';
 import restRoutes from './routes/rest';
 import userRoutes from './routes/user';
+import authRoutes from './routes/auth';
 
 import dotenv from 'dotenv';
 
@@ -61,6 +62,7 @@ app.use(bodyParser.json());
 
 app.use('/rest', restRoutes());
 app.use('/users', userRoutes());
+app.use('/auth', authRoutes());
 
 app.listen(PORT, () => {
   console.log(`Server is on port ${ PORT }`);
