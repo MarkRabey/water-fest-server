@@ -22,6 +22,7 @@ mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
+  useFindAndModify: false,
   dbName: process.env.DATABASE_NAME,
 }).catch(error => console.log(error));
 

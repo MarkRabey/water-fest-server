@@ -3,6 +3,7 @@ import validator from 'validator';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import findOrCreate from 'find-or-create';
 
 dotenv.config({ silent: process.env.NODE_ENV === 'production' });
 
@@ -13,7 +14,6 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     trim: true,
-    unique: true,
   },
   email: {
     type: String,
@@ -26,6 +26,7 @@ const UserSchema = new Schema({
       }
     }
   },
+  userId: String,
   password: {
     type: String,
     required: true,
@@ -59,6 +60,8 @@ UserSchema.methods.generateAuthToken = async function() {
   await user.save();
   return token;
 }
+
+UserSchema.statics.findOrCreate = findOrCreate;
 
 UserSchema.statics.findByCredentials = async (email, password) => {
   const user = await User.findOne({ email });

@@ -33,13 +33,20 @@ export default passport => {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: `${ process.env.APP_URL }/auth/google/callback`
     },
-    function(accessToken, refreshToken, profile, done) {
-      const userData = {
-        email: profile.emails[0].value,
-        name: profile.displayName,
-        token: accessToken,
-      };
-      done(null, userData);
+    async (accessToken, refreshToken, profile, done) => {
+      console.log(profile);
+      try {
+        const userData = {
+          email: profile.emails[0].value,
+          name: profile.displayName,
+        };
+  
+        const user = await User.findOrCreate({ userId: profile.id }, userData);
+        done(null, user);
+      } catch (error) {
+        console.log(error);
+        done(null, error);
+      }
     }),
   );
 };
