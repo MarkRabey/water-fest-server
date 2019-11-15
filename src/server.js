@@ -5,6 +5,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
 import graphqlHTTP from 'express-graphql';
+import passport from 'passport';
+import passportConfig from './config/passport';
 
 import schema from './graphql/schema';
 import restRoutes from './routes/rest';
@@ -33,6 +35,11 @@ app.use(cors());
 
 // adding morgan to log HTTP requests
 app.use(morgan('combined'));
+
+// Passport middleware
+app.use(passport.initialize());
+// Passport config
+passportConfig(passport);
 
 app.get('/', (req, res) => {
   res.json({

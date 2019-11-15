@@ -1,6 +1,8 @@
 import express from 'express';
 import User from '../models/User';
 import auth from '../middleware/auth';
+import jwt from 'jsonwebtoken';
+import { verifyJwt } from '../utils/verifyJwt';
 
 export default () => {
   const router = express.Router({
@@ -16,12 +18,17 @@ export default () => {
     }
   });
 
-  router.post('/', async (request, response) => {
+  router.post('/register', async (request, response) => {
     try {
-      const user = new User(request.body);
-      await user.save();
-      const token = await user.generateAuthToken();
-      response.status(200).json({ user, token });
+      const user = await User.findOne({ email: request.body.email });
+      if (user) {
+        return res.status(400).json({ email: "Email already exists" });
+      } else {
+        const newUser = new User(request.body);
+        await newUser.save();
+        const token = await newUser.generateAuthToken();
+        response.status(200).json({ user: newUser, token });
+      }
     } catch (error) {
       response.status(400).send(error);
     }
@@ -35,7 +42,7 @@ export default () => {
         return response.status(401).send({ error: 'Login failed. Check authentication credentials.' });
       }
       const token = await user.generateAuthToken();
-      response.json({ user, token });
+      response.json({ success: true , token: `Bearer ${ token }` });
     } catch (error) {
       response.status(400).send(error);
     }
