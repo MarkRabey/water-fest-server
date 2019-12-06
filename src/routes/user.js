@@ -1,8 +1,6 @@
 import express from 'express';
 import User from '../models/User';
 import auth from '../middleware/auth';
-import jwt from 'jsonwebtoken';
-import { verifyJwt } from '../utils/verifyJwt';
 
 export default () => {
   const router = express.Router({
@@ -18,57 +16,57 @@ export default () => {
     }
   });
 
-  router.post('/register', async (request, response) => {
+  router.post('/register', async (req, res) => {
     try {
-      const user = await User.findOne({ email: request.body.email });
+      const user = await User.findOne({ email: req.body.email });
       if (user) {
         return res.status(400).json({ email: "Email already exists" });
       } else {
-        const newUser = new User(request.body);
+        const newUser = new User(req.body);
         await newUser.save();
         const token = await newUser.generateAuthToken();
-        response.status(200).json({ user: newUser, token });
+        res.status(200).json({ user: newUser, token });
       }
     } catch (error) {
-      response.status(400).send(error);
+      res.status(400).send(error);
     }
   });
 
-  router.post('/login', async (request, response) => {
+  router.post('/login', async (req, res) => {
     try {
-      const { email, password } = request.body;
+      const { email, password } = req.body;
       const user = await User.findByCredentials(email, password);
       if (!user) {
-        return response.status(401).send({ error: 'Login failed. Check authentication credentials.' });
+        return res.status(401).send({ error: 'Login failed. Check authentication credentials.' });
       }
       const token = await user.generateAuthToken();
-      response.json({ success: true , token: `Bearer ${ token }` });
+      res.json({ success: true , token: `Bearer ${ token }` });
     } catch (error) {
-      response.status(400).send(error);
+      res.status(400).send(error);
     }
   });
 
-  router.get('/me', auth, async (request, response) => {
-    response.json(request.user);
+  router.get('/me', auth, async (req, res) => {
+    res.json(req.user);
   });
 
-  router.get('/logout', auth, async (request, response) => {
+  router.get('/logout', auth, async (req, res) => {
     try {
-      request.user.tokens = request.user.tokens.filter(token => token.token !== request.token);
-      await request.user.save();
-      response.send();
+      req.user.tokens = req.user.tokens.filter(token => token.token !== req.token);
+      await req.user.save();
+      res.send();
     } catch (error) {
-      response.status(500).send(error);
+      res.status(500).send(error);
     }
   });
 
-  router.get('/logout-all', auth, async (request, response) => {
+  router.get('/logout-all', auth, async (req, res) => {
     try {
-      request.user.tokens.splice(0, request.user.tokens.length)
-      await request.user.save();
-      response.send();
+      req.user.tokens.splice(0, req.user.tokens.length)
+      await req.user.save();
+      res.send();
     } catch (error) {
-      response.status(500).send(error);
+      res.status(500).send(error);
     }
   });
 

@@ -8,6 +8,9 @@ export default () => {
     caseSensitive: true,
   });
 
+  /**
+   * GET /artists
+   */
   router.get('/', async (request, response, next) => {
     try {
       const artists = await Artist.find();
